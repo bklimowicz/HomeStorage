@@ -7,10 +7,10 @@ public class Product
     public string Name { get; private set; }
     public Location Location { get; private set; }
     public decimal Quantity { get; private set; }
-    public string Comments { get; set; }
+    public string? Comments { get; set; }
     public string Producer { get; set; }
     
-    public Product(string name, Location location, decimal quantity, string comments)
+    public Product(string name, Location location, decimal quantity, string? comments = null)
     {
         Name = string.IsNullOrWhiteSpace(name) ? throw new InvalidNameException(name) : name;
         Location = location ?? throw new InvalidLocationException();
