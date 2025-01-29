@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeStorage.Domain", "HomeS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeStorage.Infrastructure", "HomeStorage.Infrastructure\HomeStorage.Infrastructure.csproj", "{91838C1F-C83B-42D6-8F97-54DC36150A36}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{0F6E1EFF-6A83-4E90-890F-DDF3D8767494}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HomeStorage.Tests", "Tests\HomeStorage.Tests\HomeStorage.Tests.csproj", "{BC870AFE-799D-4676-83DA-9A28B5D7464F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +40,12 @@ Global
 		{91838C1F-C83B-42D6-8F97-54DC36150A36}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91838C1F-C83B-42D6-8F97-54DC36150A36}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91838C1F-C83B-42D6-8F97-54DC36150A36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC870AFE-799D-4676-83DA-9A28B5D7464F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC870AFE-799D-4676-83DA-9A28B5D7464F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC870AFE-799D-4676-83DA-9A28B5D7464F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC870AFE-799D-4676-83DA-9A28B5D7464F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BC870AFE-799D-4676-83DA-9A28B5D7464F} = {0F6E1EFF-6A83-4E90-890F-DDF3D8767494}
 	EndGlobalSection
 EndGlobal

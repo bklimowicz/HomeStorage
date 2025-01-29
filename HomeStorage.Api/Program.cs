@@ -11,15 +11,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
 app.MapGet("/hello", () =>
     {
         return "hello";
     })
-.WithName("GetWeatherForecast");
+.WithName("TestEndpoint");
 
 app.Run();
