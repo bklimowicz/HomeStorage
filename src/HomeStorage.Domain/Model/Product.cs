@@ -2,7 +2,7 @@ using HomeStorage.Domain.Exceptions;
 
 namespace HomeStorage.Domain.Model;
 
-public class Product(string name, Location location, decimal quantity, string? producer, string? comments = null)
+public class Product(string name, Location location, decimal quantity, string? producer = null, string? comments = null)
 {
     public string Name { get; private set; } = string.IsNullOrWhiteSpace(name) ? throw new InvalidNameException(name) : name;
     public Location Location { get; private set; } = location ?? throw new InvalidLocationException();

@@ -18,4 +18,6 @@ app.MapGet("/hello", ([FromServices]ILogger<Program> logger) =>
     })
 .WithName("TestEndpoint");
 
+//app.MapGet("/products", () => )
+
 app.Run();
