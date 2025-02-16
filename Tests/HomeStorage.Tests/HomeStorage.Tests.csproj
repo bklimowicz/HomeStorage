@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\HomeStorage.Domain\HomeStorage.Domain.csproj" />
+      <ProjectReference Include="..\..\src\HomeStorage.Domain\HomeStorage.Domain.csproj" />
     </ItemGroup>
 
 </Project>
