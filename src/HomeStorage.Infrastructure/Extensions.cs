@@ -1,3 +1,4 @@
+using HomeStorage.Infrastructure.DAL;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,7 @@ public static class Extensions
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
             .Build();
+        services.AddPostgress();
         services.AddLogging(options =>
         {
             options.AddSerilog(new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger());

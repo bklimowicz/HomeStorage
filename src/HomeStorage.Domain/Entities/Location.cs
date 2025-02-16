@@ -1,18 +1,14 @@
-namespace HomeStorage.Domain.Model;
+namespace HomeStorage.Domain.Entities;
 
 public class Location
 {
-    public string Name { get; }
+    public LocationName LocationName { get; private set; }
     public IEnumerable<Product> Products => _products;
-    private readonly IList<Product> _products;
+    private readonly List<Product> _products = [];
     
-    public Location(string name, IEnumerable<Product>? products)
+    public Location(LocationName locationName)
     {
-        Name = name;
-        if (products is null)
-        {
-            _products = new List<Product>();
-        }
+        LocationName = locationName;
     }
     
     public void AddProduct(Product product)
