@@ -13,3 +13,13 @@ Accept: application/json
 ###
 GET {{baseUrl}}/products/{{productId}}
 Accept: application/json
+
+###
+POST {{baseUrl}}/products/add
+Content-Type: application/json
+
+{
+  "name": "Product 1",
+  "description": "Product 1 description",
+  "price": 10.0
+}
