@@ -3,9 +3,13 @@ using HomeStorage.Domain.ValueObjects;
 
 namespace HomeStorage.Domain.Entities;
 
-public class Product(ProductId id, ProductName name, Quantity quantity, Description? description = null, Producer? producer = null)
+public class Product(ProductId id, 
+    ProductName name, 
+    Quantity quantity,
+    Description? description = null,
+    Producer? producer = null)
 {
-    public ProductId Id { get; private set;} = id;
+    public ProductId Id { get; private set; } = id;
     public ProductName Name { get; private set; } = name;
     public Quantity Quantity { get; private set; } = quantity;
     public Description? Description { get; set; } = description;
@@ -28,7 +32,7 @@ public class Product(ProductId id, ProductName name, Quantity quantity, Descript
         Quantity = quantity;
     }
 
-    public void UpdateName(string name)
+    public void UpdateName(ProductName name)
     {
         if (string.IsNullOrWhiteSpace(name))
         {

@@ -1,4 +1,6 @@
+using HomeStorage.Domain.Repositories;
 using HomeStorage.Infrastructure.DAL;
+using HomeStorage.Infrastructure.DAL.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +11,7 @@ namespace HomeStorage.Infrastructure;
 
 public static class Extensions
 {
-    public static void AddExtensions(this IServiceCollection services)
+    public static void AddInfrastructure(this IServiceCollection services)
     {
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json")
@@ -20,9 +22,11 @@ public static class Extensions
             options.AddSerilog(new LoggerConfiguration().ReadFrom.Configuration(configuration).CreateLogger());
         });
         services.AddOpenApi();
+        services.AddTransient<IPostgresLocationRepository, PostgresLocationRepository>();
+        services.AddTransient<IPostgresProductRepository, PostgresProductRepository>();        
     }
     
-    public static void UseExtensions(this WebApplication app)
+    public static void UseInfrastructure(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {

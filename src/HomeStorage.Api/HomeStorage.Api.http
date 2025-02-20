@@ -1,6 +1,15 @@
-@baseUrl=http://localhost:5112
+@baseUrl=http://localhost:5000
+@productId=00000000-0000-0000-0000-000000000000
 
 GET {{baseUrl}}/hello
 Accept: application/json
 
 ###
+
+GET {{baseUrl}}/products
+Accept: application/json
+
+
+###
+GET {{baseUrl}}/products/{{productId}}
+Accept: application/json
