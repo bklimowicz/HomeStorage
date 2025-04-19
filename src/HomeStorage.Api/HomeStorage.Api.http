@@ -1,5 +1,5 @@
-@baseUrl=http://localhost:5000
-@productId=00000000-0000-0000-0000-000000000000
+@baseUrl=http://localhost:5112
+@productId=CF30B19E-34AD-4158-9017-A666A2A48892
 
 GET {{baseUrl}}/hello
 Accept: application/json
@@ -9,17 +9,7 @@ Accept: application/json
 GET {{baseUrl}}/products
 Accept: application/json
 
-
 ###
+
 GET {{baseUrl}}/products/{{productId}}
 Accept: application/json
-
-###
-POST {{baseUrl}}/products/add
-Content-Type: application/json
-
-{
-  "name": "Product 1",
-  "description": "Product 1 description",
-  "price": 10.0
-}

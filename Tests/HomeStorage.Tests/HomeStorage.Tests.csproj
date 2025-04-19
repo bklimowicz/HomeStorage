@@ -19,8 +19,4 @@
         <Using Include="Xunit"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\..\src\HomeStorage.Domain\HomeStorage.Domain.csproj" />
-    </ItemGroup>
-
 </Project>

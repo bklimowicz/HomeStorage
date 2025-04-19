@@ -1,62 +1,47 @@
-using HomeStorage.Application;
-using HomeStorage.Application.Commands;
-using HomeStorage.Application.Commands.Handlers;
-using HomeStorage.Domain.Entities;
-using HomeStorage.Domain.Repositories;
-using HomeStorage.Infrastructure;
+using HomeStorage.Core;
+using HomeStorage.Infrastructure.DAL;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddInfrastructure();
-builder.Services.AddApplication();
+builder.Services.AddCore();
 
 var app = builder.Build();
 
-app.UseInfrastructure();
+app.UseCore();
 
-app.MapGet("/hello", ([FromServices]ILogger<Program> logger) =>
+app.MapGet("/test", ([FromServices] HomeStorageDbContext dbContext) =>
     {
-        logger.LogDebug("Hello endpoint was called");
-        logger.LogInformation("Hello info");
-        return "hello";
+        var test = dbContext.Products;
+        return Results.Ok(dbContext.Products);
     })
-.WithName("TestEndpoint");
+    .WithName("Test");
 
-app.MapGet("/products", ([FromServices] IPostgresProductRepository repository) =>
+
+app.MapGet("/products", ([FromServices] HomeStorageDbContext dbContext) =>
 {
-    var products = repository.GetAll();
-    return Results.Ok(products);
-});
+    return Results.Ok(dbContext.Products);
+}).WithName("GetProducts");
 
-app.MapGet("/products/{id:guid}", ([FromServices] IPostgresProductRepository repository, Guid id) =>
+app.MapGet("/products/{id:guid}", ([FromServices] HomeStorageDbContext dbContext, Guid id) =>
 {
-    var product = repository.Get(id);
-    
-    if (product is null)
-    {
-        return Results.NotFound();
-    }
-    
-    return Results.Ok(product);
-});
+    return Results.Ok(dbContext.Products.FirstOrDefault(x => id == (Guid)x.Id));
+}).WithName("GetProduct");
 
-app.MapPost("/products/add", ([FromServices] ICommandHandler<AddProductCommand> commandHandler, AddProductCommand productCommand) =>
+app.MapPost("/products/add", ([FromServices] HomeStorageDbContext dbContext) =>
 {
-    if (productCommand.Id == Guid.Empty)
-    {
-        // var productCommand with {
-        //     Id = Guid.NewGuid();
-        // };
-    }
     
-    commandHandler.Handle(productCommand);
+}).WithName("AddProduct");
 
-    return Results.CreatedAtRoute("/products/{id:guid}", new { id = productCommand.Id });
-});
+app.MapDelete("/products/{id:guid}", ([FromServices] HomeStorageDbContext dbContext) =>
+{
+    
+}).WithName("DeleteProduct");
 
-// #region Locations
-// app.MapPost("/locations", ([FromServices]Postgres ))
+app.MapPut("/products/{id:guid}", ([FromServices] HomeStorageDbContext dbContext) =>
+{
+    
+}).WithName("UpdateProduct");
 
 app.Run();
