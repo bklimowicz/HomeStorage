@@ -1,15 +1,51 @@
-@baseUrl=http://localhost:5112
-@productId=CF30B19E-34AD-4158-9017-A666A2A48892
+@baseUrl=http://localhost:5000/api/v1/products
+@productId=4c577931-285e-4ae5-91f6-e293f58411fc
 
 GET {{baseUrl}}/hello
 Accept: application/json
 
-###
+### Get all products
 
-GET {{baseUrl}}/products
+GET {{baseUrl}}
 Accept: application/json
 
-###
+### Get product by id
 
-GET {{baseUrl}}/products/{{productId}}
+GET {{baseUrl}}/{{productId}}
+Accept: application/json
+
+### Add a new product
+
+POST {{baseUrl}}
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Name": "Test Product",
+  "Quantity": 10,
+  "Description": "Test Description",
+  "Producer": "Test Producer"
+}
+
+### Update a product
+
+PUT {{baseUrl}}/4c577931-285e-4ae5-91f6-e293f58411fc
+Accept: application/json
+Content-Type: application/json
+
+{
+  "Name": "Updated Product",
+  "Quantity": 20,
+  "Description": "Updated Description",
+  "Producer": "Updated Producer"
+}
+
+### Delete a product
+
+DELETE {{baseUrl}}/4c577931-285e-4ae5-91f6-e293f58411fc
+Accept: application/json
+
+### Delete all products
+
+DELETE {{baseUrl}}
 Accept: application/json
