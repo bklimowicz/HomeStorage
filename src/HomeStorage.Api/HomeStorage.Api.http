@@ -1,5 +1,5 @@
 @baseUrl=http://localhost:5000/api/v1/products
-@productId=4c577931-285e-4ae5-91f6-e293f58411fc
+@productId=a777b3ba-6bbd-4ba5-8074-dc958f64ac98
 
 GET {{baseUrl}}/hello
 Accept: application/json
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 ### Update a product
 
-PUT {{baseUrl}}/4c577931-285e-4ae5-91f6-e293f58411fc
+PUT {{baseUrl}}/{{productId}}
 Accept: application/json
 Content-Type: application/json
 
@@ -42,7 +42,7 @@ Content-Type: application/json
 
 ### Delete a product
 
-DELETE {{baseUrl}}/4c577931-285e-4ae5-91f6-e293f58411fc
+DELETE {{baseUrl}}/{{productId}}
 Accept: application/json
 
 ### Delete all products
