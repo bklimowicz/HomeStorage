@@ -1,4 +1,4 @@
-namespace HomeStorage.Domain.Exceptions;
+namespace HomeStorage.Core.Exceptions;
 
 internal abstract class HomeStorageException(string errorMessage) : Exception
 {

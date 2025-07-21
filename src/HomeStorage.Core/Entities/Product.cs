@@ -1,26 +1,47 @@
-using HomeStorage.Domain.Exceptions;
-using HomeStorage.Domain.ValueObjects;
+using HomeStorage.Core.Exceptions;
+using HomeStorage.Core.ValueObjects;
 
-namespace HomeStorage.Domain.Entities;
+namespace HomeStorage.Core.Entities;
 
-public class Product(ProductId id, 
-    ProductName name, 
-    Quantity quantity,
-    Description? description = null,
-    Producer? producer = null)
+public class Product
 {
-    public ProductId Id { get; private set; } = id;
-    public ProductName Name { get; private set; } = name;
-    public Quantity Quantity { get; private set; } = quantity;
-    public Description? Description { get; set; } = description;
-    public Producer? Producer { get; set; } = producer;
+    private Product(ProductId id, 
+        ProductName name, 
+        Quantity quantity,
+        Description? description = null,
+        Producer? producer = null)
+    {
+        Id = id;
+        Name = name;
+        Quantity = quantity;
+        Description = description;
+        Producer = producer;
+    }
+
+    public ProductId Id { get; private set; }
+    public ProductName Name { get; private set; }
+    public Quantity Quantity { get; private set; }
+    public Description? Description { get; set; }
+    public Producer? Producer { get; set; }
 
     public static Product Create(ProductId id,
-        ProductName name, 
-        Quantity quantity, 
-        Description? description = null, 
-        Producer? producer = null) => 
-        new(id, name, quantity, description, producer);
+        ProductName name,
+        Quantity quantity,
+        Description? description = null,
+        Producer? producer = null)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new InvalidQuantityException(quantity);
+        }
+
+        if (quantity <= 0)
+        {
+            throw new InvalidNameException(name);
+        }
+        
+        return new Product(id, name, quantity, description, producer);
+    }
     
     public void UpdateQuantity(Quantity quantity)
     {

@@ -1,6 +1,6 @@
-using HomeStorage.Domain.Exceptions;
+using HomeStorage.Core.Exceptions;
 
-namespace HomeStorage.Domain.ValueObjects;
+namespace HomeStorage.Core.ValueObjects;
 
 public sealed record Quantity {
     public decimal Value { get; }

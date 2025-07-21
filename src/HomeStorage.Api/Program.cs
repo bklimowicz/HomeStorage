@@ -1,7 +1,7 @@
 using HomeStorage.Core;
-using HomeStorage.Core.Commands;
-using HomeStorage.Domain.Entities;
-using HomeStorage.Infrastructure.DAL;
+using HomeStorage.Core.DTOs;
+using HomeStorage.Core.Entities;
+using HomeStorage.Core.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,82 +12,89 @@ var app = builder.Build();
 
 app.UseCore();
 
-var group = app.MapGroup("/api/v1").WithTags("v1");
-var productGroup = group.MapGroup("/products").WithTags("Products");
+// app.MapGet("/test", ([FromServices] HomeStorageDbContext dbContext) =>
+//     {
+//         var test = dbContext.Products;
+//         return Results.Ok(dbContext.Products);
+//     })
+//     .WithName("Test");
+//
+// app.MapGet("/products/count", ([FromServices] HomeStorageDbContext dbContext) =>
+// {
+//     return Results.Ok(dbContext.Products.Count());
+// }).WithName("GetProductsCount");
 
-app.MapGet("/test", ([FromServices] HomeStorageDbContext dbContext) =>
-    {
-        var test = dbContext.Products;
-        return Results.Ok(dbContext.Products);
-    })
-    .WithName("Test");
+app.MapGet("/products", ([FromServices] IPostgresProductRepository postgresProductRepository) => Results.Ok(postgresProductRepository.GetAll())).WithName("GetProducts");
 
-productGroup.MapGet("/", ([FromServices] HomeStorageDbContext dbContext) =>
+app.MapGet("/products/{id:guid}", ([FromServices] IPostgresProductRepository postgresProductRepository, Guid id) =>
 {
-    var products = dbContext.Products.ToList();
-    return Results.Ok(products);
-}).WithName("GetProducts");
+    var product = postgresProductRepository.Get(id);
 
-productGroup.MapGet("/{id:guid}", ([FromServices] HomeStorageDbContext dbContext, Guid id) =>
-{
-    var product = dbContext.Products.AsEnumerable().FirstOrDefault(x => id == x.Id.Value);
-    
-    return product is null ? Results.BadRequest() : Results.Ok(product);
+    return product is null ? Results.NotFound() : Results.Ok(postgresProductRepository.Get(id));
 }).WithName("GetProduct");
 
-productGroup.MapPost("/", async ([FromServices] HomeStorageDbContext dbContext, AddProductCommand command) =>
+app.MapPost("/products", ([FromServices] IPostgresProductRepository postgresProductRepository, [FromBody] CreateProduct command) =>
 {
-    var product = Product.Create(Guid.NewGuid(), command.Name, command.Quantity, command.Description, command.Producer);
-    
-    dbContext.Products.Add(product);
-    await dbContext.SaveChangesAsync();
-    
-    return Results.CreatedAtRoute("GetProduct", new { id = product.Id.Value }, product);
+    var product = Product.Create(
+        Guid.NewGuid(),
+        command.Name,
+        command.Quantity,
+        command.Description!,
+        command.Producer!
+    );
 
+    try
+    {
+        postgresProductRepository.Create(product);
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex);
+        return Results.StatusCode(500);
+    }
+    
+    return Results.CreatedAtRoute("GetProduct", new { id = (Guid)product.Id });
+    
 }).WithName("AddProduct");
 
-productGroup.MapDelete("/{id:guid}", async ([FromServices] HomeStorageDbContext dbContext, Guid id) =>
+app.MapPut("/products/{id:guid}", ([FromServices] IPostgresProductRepository postgresProductRepository, Guid id, UpdateProduct command) =>
 {
-    var product = dbContext.Products.AsEnumerable().FirstOrDefault(x => id == x.Id.Value);
+    var product = postgresProductRepository.Get(id);
     
     if (product is null)
     {
         return Results.NotFound();
     }
-    dbContext.Products.Remove(product);
-    await dbContext.SaveChangesAsync();
-    return Results.NoContent();
-}).WithName("DeleteProduct");
-
-productGroup.MapDelete("/", async ([FromServices] HomeStorageDbContext dbContext) =>
-{
-    var products = dbContext.Products.ToList();
-    dbContext.Products.RemoveRange(products);
-    await dbContext.SaveChangesAsync();
     
-    return Results.NoContent();
-}).WithName("DeleteAllProducts");
+    product.UpdateName(command.Name);
+    product.UpdateQuantity(command.Quantity);
+    product.Description = command.Description!;
+    product.Producer = command.Producer!;
 
-productGroup.MapPut("/{id:guid}", async ([FromServices] HomeStorageDbContext dbContext, Guid id, UpdateOrAddProductCommand command) =>
-{
-    var product = dbContext.Products.AsEnumerable().FirstOrDefault(x => id == x.Id.Value);
-    if (product is not null)
+    try
     {
-        product.UpdateName(command.Name);
-        product.UpdateQuantity(command.Quantity);
-        
-        await dbContext.SaveChangesAsync();
-        return Results.NoContent();
+        postgresProductRepository.Update(product);
     }
-    else
+    catch (Exception)
     {
-        var newProduct = new Product(Guid.NewGuid(), command.Name, command.Quantity, command.Description, command.Producer);
-        dbContext.Products.Add(newProduct);
-        await dbContext.SaveChangesAsync();
-        return Results.CreatedAtRoute("GetProduct", new { id = newProduct.Id.Value }, newProduct);
+        return Results.StatusCode(500);
     }
     
+    return Results.Ok();
 }).WithName("UpdateProduct");
 
+app.MapDelete("/products/{id:guid}", ([FromServices] IPostgresProductRepository postgresProductRepository, Guid id) =>
+{
+    var product = postgresProductRepository.Get(id);
+
+    if (product is null)
+    {
+        return Results.NotFound();
+    }
+    
+    postgresProductRepository.Delete(product);
+    
+    return Results.Ok();
+}).WithName("DeleteProduct");
 
 app.Run();

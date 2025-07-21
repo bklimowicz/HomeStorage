@@ -1,8 +1,8 @@
-using HomeStorage.Domain.Entities;
-using HomeStorage.Domain.Repositories;
-using HomeStorage.Domain.ValueObjects;
+using HomeStorage.Core.Entities;
+using HomeStorage.Core.Repositories;
+using HomeStorage.Core.ValueObjects;
 
-namespace HomeStorage.Infrastructure.DAL.Repositories;
+namespace HomeStorage.Core.DAL.Repositories;
 
 internal sealed class PostgresProductRepository : IPostgresProductRepository
 {
@@ -13,26 +13,26 @@ internal sealed class PostgresProductRepository : IPostgresProductRepository
         _dbContext = dbContext;
     }
 
-    public Product Get(ProductId id) 
-        => _dbContext.Products.SingleOrDefault(x => x.Id == id)!;
+    public Product? Get(ProductId id) 
+        => _dbContext.Products.SingleOrDefault(x => x.Id == id);
 
     public IEnumerable<Product> GetAll() => _dbContext.Products.ToList();
 
-    public void Add(Product location)
+    public void Create(Product product)
     {
-        _dbContext.Products.Add(location);
+        _dbContext.Products.Add(product);
         _dbContext.SaveChanges();
     }
 
-    public void Update(Product location)
+    public void Update(Product product)
     {
-        _dbContext.Products.Update(location);
+        _dbContext.Products.Update(product);
         _dbContext.SaveChanges();
     }
 
-    public void Delete(Product location)
+    public void Delete(Product product)
     {
-        _dbContext.Products.Remove(location);
+        _dbContext.Products.Remove(product);
         _dbContext.SaveChanges();
     }
 }

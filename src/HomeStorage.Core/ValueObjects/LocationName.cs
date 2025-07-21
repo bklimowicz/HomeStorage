@@ -1,6 +1,6 @@
-using HomeStorage.Domain.Exceptions;
+using HomeStorage.Core.Exceptions;
 
-namespace HomeStorage.Domain.Entities;
+namespace HomeStorage.Core.ValueObjects;
 
 public sealed record LocationName
 {

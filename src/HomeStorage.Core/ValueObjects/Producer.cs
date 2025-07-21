@@ -1,4 +1,4 @@
-namespace HomeStorage.Domain.ValueObjects;
+namespace HomeStorage.Core.ValueObjects;
 
 public sealed record Producer
 {

@@ -1,0 +1,52 @@
+﻿@page "/products"
+@using System.Text.Json
+@using global::HomeStorage.Web.Model
+@rendermode InteractiveServer
+@inject HttpClient _httpClient;
+
+<PageTitle>Products</PageTitle>
+
+<h1>Products</h1>
+
+@if (_products is null)
+{
+    <p>Loading products...</p>
+}
+else if (!_products.Any())
+{
+    <p>No products found.</p>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach(var product in _products)
+    {
+        <div class="card">
+            <div class="card-header">
+                @product.Name.Value
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">@product.Description.Value</h5>
+                @* <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> *@
+                <a href="/products/@product.Id.Value/edit" class="btn btn-primary">Edit</a>
+            </div>
+        </div>
+    }
+    </div>
+}
+
+@code {
+    private List<Product>? _products;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        var response = await _httpClient.GetAsync("/products");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            _products = JsonSerializer.Deserialize<List<Product>>(content) ?? [];
+        }
+    }
+}

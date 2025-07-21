@@ -1,13 +1,13 @@
-using HomeStorage.Domain.Entities;
-using HomeStorage.Domain.ValueObjects;
+using HomeStorage.Core.Entities;
+using HomeStorage.Core.ValueObjects;
 
-namespace HomeStorage.Domain.Repositories;
+namespace HomeStorage.Core.Repositories;
 
 public interface IPostgresProductRepository
 {
-    public Product Get(ProductId id);
+    public Product? Get(ProductId id);
     public IEnumerable<Product> GetAll();
-    public void Add(Product location);
+    public void Create(Product location);
     public void Update(Product location);
-    public void Delete(Product location);
+    public void Delete(Product product);
 }

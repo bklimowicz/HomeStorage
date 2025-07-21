@@ -1,8 +1,9 @@
-using HomeStorage.Domain.Entities;
-using HomeStorage.Domain.Repositories;
+using HomeStorage.Core.Entities;
+using HomeStorage.Core.Repositories;
+using HomeStorage.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
-namespace HomeStorage.Infrastructure.DAL.Repositories;
+namespace HomeStorage.Core.DAL.Repositories;
 
 internal sealed class PostgresLocationRepository : IPostgresLocationRepository
 {

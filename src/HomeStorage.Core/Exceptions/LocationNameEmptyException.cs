@@ -1,4 +1,4 @@
-namespace HomeStorage.Domain.Exceptions;
+namespace HomeStorage.Core.Exceptions;
 
 internal class LocationNameEmptyException() : HomeStorageException("Invalid location")
 {

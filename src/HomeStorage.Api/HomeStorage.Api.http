@@ -1,51 +1,38 @@
-@baseUrl=http://localhost:5000/api/v1/products
-@productId=a777b3ba-6bbd-4ba5-8074-dc958f64ac98
+@baseUrl=http://localhost:5000
+@productId=a6e059ba-a013-41e0-bdae-39b8a883b5a6
 
-GET {{baseUrl}}/hello
-Accept: application/json
 
-### Get all products
+GET {{baseUrl}}/products
+Content-Type: application/json
 
-GET {{baseUrl}}
-Accept: application/json
+###
 
-### Get product by id
+GET {{baseUrl}}/products/{{productId}}
+Content-Type: application/json
 
-GET {{baseUrl}}/{{productId}}
-Accept: application/json
+###
 
-### Add a new product
-
-POST {{baseUrl}}
-Accept: application/json
+POST {{baseUrl}}/products
 Content-Type: application/json
 
 {
-  "Name": "Test Product",
-  "Quantity": 10,
-  "Description": "Test Description",
-  "Producer": "Test Producer"
+  "name": "New Product",
+  "description": "This is a new product.",
+  "quantity": 2
 }
 
-### Update a product
+###
 
-PUT {{baseUrl}}/{{productId}}
-Accept: application/json
+PUT {{baseUrl}}/products/{{productId}}
 Content-Type: application/json
 
 {
-  "Name": "Updated Product",
-  "Quantity": 20,
-  "Description": "Updated Description",
-  "Producer": "Updated Producer"
+  "name": "Updated Product",
+  "description": "This is an updated product.",
+  "quantity": 5
 }
 
-### Delete a product
+###
 
-DELETE {{baseUrl}}/{{productId}}
-Accept: application/json
-
-### Delete all products
-
-DELETE {{baseUrl}}
-Accept: application/json
+DELETE {{baseUrl}}/products/{{productId}}
+Content-Type: application/json

@@ -1,6 +1,7 @@
-using HomeStorage.Domain.Entities;
+using HomeStorage.Core.Entities;
+using HomeStorage.Core.ValueObjects;
 
-namespace HomeStorage.Domain.Repositories;
+namespace HomeStorage.Core.Repositories;
 
 public interface IPostgresLocationRepository
 {

@@ -1,9 +1,9 @@
-using HomeStorage.Domain.Entities;
-using HomeStorage.Domain.ValueObjects;
+using HomeStorage.Core.Entities;
+using HomeStorage.Core.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace HomeStorage.Infrastructure.DAL.Configurations;
+namespace HomeStorage.Core.DAL.Configurations;
 
 internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
 {

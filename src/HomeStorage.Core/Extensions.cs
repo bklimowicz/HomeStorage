@@ -1,4 +1,6 @@
-using HomeStorage.Infrastructure.DAL;
+using HomeStorage.Core.DAL;
+using HomeStorage.Core.DAL.Repositories;
+using HomeStorage.Core.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,6 +13,7 @@ public static class Extensions
     {
         services.AddPostgress();
         services.AddOpenApi();
+        services.AddScoped<IPostgresProductRepository, PostgresProductRepository>();
         
         return services;
     }

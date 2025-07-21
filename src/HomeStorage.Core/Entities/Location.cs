@@ -1,4 +1,6 @@
-namespace HomeStorage.Domain.Entities;
+using HomeStorage.Core.ValueObjects;
+
+namespace HomeStorage.Core.Entities;
 
 public class Location
 {
