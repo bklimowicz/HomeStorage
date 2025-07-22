@@ -5,9 +5,9 @@ namespace HomeStorage.Core.Repositories;
 
 public interface IProductRepository
 {
-    public Product? Get(ProductId id);
-    public IEnumerable<Product> GetAll();
-    public void Create(Product location);
-    public void Update(Product location);
-    public void Delete(Product product);
+    public Task<Product?> Get(ProductId id);
+    public Task<IEnumerable<Product>> GetAll();
+    public Task Create(Product location);
+    public Task Update(Product loTcation);
+    public Task Delete(Product product);
 }

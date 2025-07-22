@@ -12,22 +12,22 @@ var app = builder.Build();
 
 app.UseCore();
 
-app.MapGet("/products", ([FromServices] IProductRepository productRepository) =>
+app.MapGet("/products", async ([FromServices] IProductRepository productRepository) =>
 {
-    var products = productRepository.GetAll()
+    var products = (await productRepository.GetAll())
         .Select(product => product.ToDto())
         .ToList();
     return Results.Ok(products);
 }).WithName("GetProducts");
 
-app.MapGet("/products/{id:guid}", ([FromServices] IProductRepository productRepository, Guid id) =>
+app.MapGet("/products/{id:guid}", async ([FromServices] IProductRepository productRepository, Guid id) =>
 {
-    var product = productRepository.Get(id);
+    var product = await productRepository.Get(id);
     
     return product is null ? Results.NotFound() : Results.Ok(product.ToDto());
 }).WithName("GetProduct");
 
-app.MapPost("/products", ([FromServices] IProductRepository productRepository, [FromBody] CreateProduct command) =>
+app.MapPost("/products", async ([FromServices] IProductRepository productRepository, [FromBody] CreateProduct command) =>
 {
     var product = Product.Create(
         Guid.NewGuid(),
@@ -39,7 +39,7 @@ app.MapPost("/products", ([FromServices] IProductRepository productRepository, [
 
     try
     {
-        productRepository.Create(product);
+        await productRepository.Create(product);
     }
     catch (Exception ex)
     {
@@ -51,9 +51,9 @@ app.MapPost("/products", ([FromServices] IProductRepository productRepository, [
     
 }).WithName("AddProduct");
 
-app.MapPut("/products/{id:guid}", ([FromServices] IProductRepository productRepository, Guid id, UpdateProduct command) =>
+app.MapPut("/products/{id:guid}", async ([FromServices] IProductRepository productRepository, Guid id, UpdateProduct command) =>
 {
-    var product = productRepository.Get(id);
+    var product = await productRepository.Get(id);
     
     if (product is null)
     {
@@ -67,7 +67,7 @@ app.MapPut("/products/{id:guid}", ([FromServices] IProductRepository productRepo
 
     try
     {
-        productRepository.Update(product);
+        await productRepository.Update(product);
     }
     catch (Exception)
     {
@@ -77,16 +77,16 @@ app.MapPut("/products/{id:guid}", ([FromServices] IProductRepository productRepo
     return Results.Ok();
 }).WithName("UpdateProduct");
 
-app.MapDelete("/products/{id:guid}", ([FromServices] IProductRepository productRepository, Guid id) =>
+app.MapDelete("/products/{id:guid}", async ([FromServices] IProductRepository productRepository, Guid id) =>
 {
-    var product = productRepository.Get(id);
+    var product = await productRepository.Get(id);
 
     if (product is null)
     {
         return Results.NotFound();
     }
     
-    productRepository.Delete(product);
+    await productRepository.Delete(product);
     
     return Results.Ok();
 }).WithName("DeleteProduct");
