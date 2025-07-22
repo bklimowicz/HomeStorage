@@ -1,5 +1,5 @@
 @baseUrl=http://localhost:5000
-@productId=a6e059ba-a013-41e0-bdae-39b8a883b5a6
+@productId=d31df92b-b5a9-4ee4-a808-f4471bd508a0
 
 
 GET {{baseUrl}}/products

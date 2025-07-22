@@ -12,25 +12,19 @@ var app = builder.Build();
 
 app.UseCore();
 
-// app.MapGet("/test", ([FromServices] HomeStorageDbContext dbContext) =>
-//     {
-//         var test = dbContext.Products;
-//         return Results.Ok(dbContext.Products);
-//     })
-//     .WithName("Test");
-//
-// app.MapGet("/products/count", ([FromServices] HomeStorageDbContext dbContext) =>
-// {
-//     return Results.Ok(dbContext.Products.Count());
-// }).WithName("GetProductsCount");
-
-app.MapGet("/products", ([FromServices] IPostgresProductRepository postgresProductRepository) => Results.Ok(postgresProductRepository.GetAll())).WithName("GetProducts");
+app.MapGet("/products", ([FromServices] IPostgresProductRepository postgresProductRepository) =>
+{
+    var products = postgresProductRepository.GetAll()
+        .Select(product => product.ToDto())
+        .ToList();
+    return Results.Ok(products);
+}).WithName("GetProducts");
 
 app.MapGet("/products/{id:guid}", ([FromServices] IPostgresProductRepository postgresProductRepository, Guid id) =>
 {
     var product = postgresProductRepository.Get(id);
-
-    return product is null ? Results.NotFound() : Results.Ok(postgresProductRepository.Get(id));
+    
+    return product is null ? Results.NotFound() : Results.Ok(product.ToDto());
 }).WithName("GetProduct");
 
 app.MapPost("/products", ([FromServices] IPostgresProductRepository postgresProductRepository, [FromBody] CreateProduct command) =>

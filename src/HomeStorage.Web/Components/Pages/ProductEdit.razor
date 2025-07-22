@@ -1,53 +1,87 @@
 @page "/products/{id:guid}/edit"
 @using System.Text.Json
-@using HomeStorage.Web.Model
+@using HomeStorage.Web.Model.DTOs
 @inject HttpClient _httpClient;
+
+<PageTitle>Edit product</PageTitle>
 
 <h3>ProductEdit</h3>
 
-@if (_product is not null)
+@if (Product is not null)
 {
-    <EditForm Model="_product">
+    <EditForm Model="Product" FormName="ProductEditForm" OnSubmit="Submit">
         <div class="row mb-6">
             <div class="col-2">
-                <label class="col-form-label">@nameof(_product.Name)</label>
+                <label class="col-form-label">@nameof(Product.Name)</label>
             </div>
             <div class="col-6">
-                <InputText @bind-Value="_product.Name.Value" class="form-control"></InputText>
+                <InputText @bind-Value="Product.Name" class="form-control"></InputText>
             </div>
         </div>
         <div class="row mb-6">
             <div class="col-2">
-                <label class="col-form-label">@nameof(_product.Description)</label>
+                <label class="col-form-label">@nameof(Product.Description)</label>
             </div>
             <div class="col-6">
-                <InputText @bind-Value="_product.Description.Value" class="form-control"></InputText>
+                <InputText @bind-Value="Product.Description" class="form-control"></InputText>
             </div>
         </div>
+        <div class="row mb-6">
+            <div class="col-2">
+                <label class="col-form-label">@nameof(Product.Producer)</label>
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="Product.Producer" class="form-control"></InputText>
+            </div>
+        </div>
+        <div class="row mb-6">
+            <div class="col-2">
+                <label class="col-form-label">@nameof(Product.Quantity)</label>
+            </div>
+            <div class="col-6">
+                <InputNumber @bind-Value="Product.Quantity" class="form-control"></InputNumber>
+            </div>
+        </div>
+        <button type="submit">Submit</button>
+        <a href="/products">
+            <button>Back to Products</button>
+        </a>
     </EditForm>
 }
-
-
-<a href="/products">
-    <button>Back to Products</button>
-</a>
-
 
 @code {
     [Parameter]
     public Guid? Id { get; set; }
 
-    private Product? _product;
+    [SupplyParameterFromForm(FormName = "ProductEditForm")]
+    private ProductDto? Product { get; set; }
 
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
-        var response = await _httpClient.GetAsync($"/products/{Id}");
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var content = await response.Content.ReadAsStringAsync();
-            _product = JsonSerializer.Deserialize<Product>(content);
+            var response = await _httpClient.GetAsync($"/products/{Id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                Product ??= JsonSerializer.Deserialize<ProductDto>(content);
+            }
+        } catch (Exception ex)
+        {
+            await Console.Error.WriteLineAsync($"Error fetching product: {ex.Message}");
+        }
+    }
+
+    private async Task Submit()
+    {
+        try
+        {
+            await _httpClient.PutAsJsonAsync($"/products/{Id}", Product);
+        } catch (Exception ex)
+        {
+            await Console.Error.WriteLineAsync($"Error updating product: {ex.Message}");
         }
     }
 }

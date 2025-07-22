@@ -1,3 +1,4 @@
+using HomeStorage.Core.DTOs;
 using HomeStorage.Core.Exceptions;
 using HomeStorage.Core.ValueObjects;
 
@@ -61,5 +62,17 @@ public class Product
         }
         
         Name = name;
+    }
+
+    public ProductDto ToDto()
+    {
+        return new ProductDto
+        {
+            Id = Id.Value,
+            Name = Name.Value,
+            Quantity = Quantity.Value,
+            Description = Description?.Value ?? "",
+            Producer = Producer?.Value ?? ""
+        };
     }
 }

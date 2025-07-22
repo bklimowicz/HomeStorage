@@ -1,12 +1,16 @@
 ﻿@page "/products"
 @using System.Text.Json
 @using global::HomeStorage.Web.Model
+@using HomeStorage.Web.Model.DTOs
 @rendermode InteractiveServer
 @inject HttpClient _httpClient;
 
 <PageTitle>Products</PageTitle>
 
-<h1>Products</h1>
+<h1>Products</h1> 
+<span>
+<a href="/products/create" class="btn btn-primary mb-3">Create Product</a>
+</span>
 
 @if (_products is null)
 {
@@ -23,12 +27,12 @@ else
     {
         <div class="card">
             <div class="card-header">
-                @product.Name.Value
+                @product.Name
             </div>
             <div class="card-body">
-                <h5 class="card-title">@product.Description.Value</h5>
+                <h5 class="card-title">@product.Description</h5>
                 @* <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> *@
-                <a href="/products/@product.Id.Value/edit" class="btn btn-primary">Edit</a>
+                <a href="/products/@product.Id/edit" class="btn btn-primary">Edit</a>
             </div>
         </div>
     }
@@ -36,7 +40,7 @@ else
 }
 
 @code {
-    private List<Product>? _products;
+    private List<ProductDto>? _products;
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,7 +50,7 @@ else
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
-            _products = JsonSerializer.Deserialize<List<Product>>(content) ?? [];
+            _products = JsonSerializer.Deserialize<List<ProductDto>>(content) ?? [];
         }
     }
 }

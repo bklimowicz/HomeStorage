@@ -1,0 +1,71 @@
+@page "/products/create"
+@using HomeStorage.Web.Model.DTOs
+@inject HttpClient _httpClient;
+
+<PageTitle>Create Product</PageTitle>
+
+<h3>Create Product</h3>
+
+<EditForm Model="Product" FormName="ProductEditForm" OnSubmit="Submit">
+    <div class="row mb-6">
+        <div class="col-2">
+            <label class="col-form-label">@nameof(Product.Name)</label>
+        </div>
+        <div class="col-6">
+            <InputText @bind-Value="Product.Name" class="form-control"></InputText>
+        </div>
+    </div>
+    <div class="row mb-6">
+        <div class="col-2">
+            <label class="col-form-label">@nameof(Product.Description)</label>
+        </div>
+        <div class="col-6">
+            <InputText @bind-Value="Product.Description" class="form-control"></InputText>
+        </div>
+    </div>
+    <div class="row mb-6">
+        <div class="col-2">
+            <label class="col-form-label">@nameof(Product.Producer)</label>
+        </div>
+        <div class="col-6">
+            <InputText @bind-Value="Product.Producer" class="form-control"></InputText>
+        </div>
+    </div>
+    <div class="row mb-6">
+        <div class="col-2">
+            <label class="col-form-label">@nameof(Product.Quantity)</label>
+        </div>
+        <div class="col-6">
+            <InputNumber @bind-Value="Product.Quantity" class="form-control"></InputNumber>
+        </div>
+    </div>
+    <button type="submit">Submit</button>
+    <a href="/products">
+        <button>Back to Products</button>
+    </a>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm(FormName = "ProductEditForm")]
+    private ProductDto? Product { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Product ??= new ProductDto();
+    }
+
+    private async Task Submit()
+    {
+        if (Product is null)
+            return;
+
+        try
+        {
+            await _httpClient.PostAsJsonAsync("/products", Product);
+        } catch (Exception ex)
+        {
+            await Console.Error.WriteLineAsync($"Error creating product: {ex.Message}");
+        }
+    }
+}
