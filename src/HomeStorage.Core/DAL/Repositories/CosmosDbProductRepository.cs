@@ -4,30 +4,35 @@ using HomeStorage.Core.ValueObjects;
 
 namespace HomeStorage.Core.DAL.Repositories;
 
-public class CosmosDbProductRepository : IProductRepository
+internal sealed class CosmosDbProductRepository : IProductRepository
 {
-    public Product? Get(ProductId id)
+    private readonly HomeStorageDbContext _dbContext;
+
+    public CosmosDbProductRepository(HomeStorageDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
     }
 
-    public IEnumerable<Product> GetAll()
+    public Product? Get(ProductId id) 
+        => _dbContext.Products.SingleOrDefault(x => x.Id == id);
+
+    public IEnumerable<Product> GetAll() => _dbContext.Products.ToList();
+
+    public void Create(Product product)
     {
-        throw new NotImplementedException();
+        _dbContext.Products.Add(product);
+        _dbContext.SaveChanges();
     }
 
-    public void Create(Product location)
+    public void Update(Product product)
     {
-        throw new NotImplementedException();
-    }
-
-    public void Update(Product location)
-    {
-        throw new NotImplementedException();
+        _dbContext.Products.Update(product);
+        _dbContext.SaveChanges();
     }
 
     public void Delete(Product product)
     {
-        throw new NotImplementedException();
+        _dbContext.Products.Remove(product);
+        _dbContext.SaveChanges();
     }
 }

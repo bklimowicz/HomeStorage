@@ -1,4 +1,3 @@
-using System.Configuration;
 using HomeStorage.Core.DAL;
 using HomeStorage.Core.DAL.Repositories;
 using HomeStorage.Core.Repositories;
@@ -15,7 +14,7 @@ public static class Extensions
     {
         services.AddCosmosDb(configuration);
         services.AddOpenApi();
-        services.AddScoped<IProductRepository, ProductRepository>();
+        services.AddScoped<IProductRepository, CosmosDbProductRepository>();
         
         return services;
     }

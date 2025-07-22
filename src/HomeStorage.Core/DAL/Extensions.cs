@@ -10,8 +10,9 @@ internal static class Extensions
     {
         services.AddDbContext<HomeStorageDbContext>(x =>
         {
+            var key = configuration["CosmosDb:Key"];
             x.UseCosmos("https://szkcosmosdb.documents.azure.com:443/",
-                configuration["CosmosDb:Key"]!,
+                key!,
                 "HomeStorage");
         });
         

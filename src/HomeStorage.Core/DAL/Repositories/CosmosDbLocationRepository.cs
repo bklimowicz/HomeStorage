@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HomeStorage.Core.DAL.Repositories;
 
-internal sealed class LocationRepository : ILocationRepository
+internal sealed class CosmosDbLocationRepository : ILocationRepository
 {
     private readonly HomeStorageDbContext _dbContext;
 
-    public LocationRepository(HomeStorageDbContext dbContext)
+    public CosmosDbLocationRepository(HomeStorageDbContext dbContext)
     {
         _dbContext = dbContext;
     }
