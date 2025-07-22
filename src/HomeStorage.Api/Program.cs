@@ -14,7 +14,7 @@ app.UseCore();
 
 app.MapGet("/products", async ([FromServices] IProductRepository productRepository) =>
 {
-    var products = (await productRepository.GetAll())
+    var products = (await productRepository.GetAllAsync())
         .Select(product => product.ToDto())
         .ToList();
     return Results.Ok(products);
@@ -22,7 +22,7 @@ app.MapGet("/products", async ([FromServices] IProductRepository productReposito
 
 app.MapGet("/products/{id:guid}", async ([FromServices] IProductRepository productRepository, Guid id) =>
 {
-    var product = await productRepository.Get(id);
+    var product = await productRepository.GetAsync(id);
     
     return product is null ? Results.NotFound() : Results.Ok(product.ToDto());
 }).WithName("GetProduct");
@@ -39,7 +39,7 @@ app.MapPost("/products", async ([FromServices] IProductRepository productReposit
 
     try
     {
-        await productRepository.Create(product);
+        await productRepository.CreateAsync(product);
     }
     catch (Exception ex)
     {
@@ -53,7 +53,7 @@ app.MapPost("/products", async ([FromServices] IProductRepository productReposit
 
 app.MapPut("/products/{id:guid}", async ([FromServices] IProductRepository productRepository, Guid id, UpdateProduct command) =>
 {
-    var product = await productRepository.Get(id);
+    var product = await productRepository.GetAsync(id);
     
     if (product is null)
     {
@@ -67,7 +67,7 @@ app.MapPut("/products/{id:guid}", async ([FromServices] IProductRepository produ
 
     try
     {
-        await productRepository.Update(product);
+        await productRepository.UpdateAsync(product);
     }
     catch (Exception)
     {
@@ -79,14 +79,14 @@ app.MapPut("/products/{id:guid}", async ([FromServices] IProductRepository produ
 
 app.MapDelete("/products/{id:guid}", async ([FromServices] IProductRepository productRepository, Guid id) =>
 {
-    var product = await productRepository.Get(id);
+    var product = await productRepository.GetAsync(id);
 
     if (product is null)
     {
         return Results.NotFound();
     }
     
-    await productRepository.Delete(product);
+    await productRepository.DeleteAsync(product);
     
     return Results.Ok();
 }).WithName("DeleteProduct");
