@@ -1,18 +1,20 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace HomeStorage.Core.DAL;
 
 internal static class Extensions
 {
-    public static IServiceCollection AddPostgress(this IServiceCollection services)
+    public static IServiceCollection AddCosmosDb(this IServiceCollection services, IConfiguration configuration)
     {
-        const string connectionString = "Host=localhost;Port=5432;Database=HomeStorage;Username=postgres;Password=postgres";
         services.AddDbContext<HomeStorageDbContext>(x =>
-            x.UseNpgsql(connectionString));
+        {
+            x.UseCosmos("https://szkcosmosdb.documents.azure.com:443/",
+                configuration["CosmosDb:Key"]!,
+                "HomeStorage");
+        });
         
-        services.AddDbContext<HomeStorageDbContext>();
-
         return services;
     }
 }

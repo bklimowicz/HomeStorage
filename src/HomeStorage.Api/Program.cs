@@ -6,28 +6,28 @@ using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCore();
+builder.Services.AddCore(builder.Configuration);
 
 var app = builder.Build();
 
 app.UseCore();
 
-app.MapGet("/products", ([FromServices] IPostgresProductRepository postgresProductRepository) =>
+app.MapGet("/products", ([FromServices] IProductRepository productRepository) =>
 {
-    var products = postgresProductRepository.GetAll()
+    var products = productRepository.GetAll()
         .Select(product => product.ToDto())
         .ToList();
     return Results.Ok(products);
 }).WithName("GetProducts");
 
-app.MapGet("/products/{id:guid}", ([FromServices] IPostgresProductRepository postgresProductRepository, Guid id) =>
+app.MapGet("/products/{id:guid}", ([FromServices] IProductRepository productRepository, Guid id) =>
 {
-    var product = postgresProductRepository.Get(id);
+    var product = productRepository.Get(id);
     
     return product is null ? Results.NotFound() : Results.Ok(product.ToDto());
 }).WithName("GetProduct");
 
-app.MapPost("/products", ([FromServices] IPostgresProductRepository postgresProductRepository, [FromBody] CreateProduct command) =>
+app.MapPost("/products", ([FromServices] IProductRepository productRepository, [FromBody] CreateProduct command) =>
 {
     var product = Product.Create(
         Guid.NewGuid(),
@@ -39,7 +39,7 @@ app.MapPost("/products", ([FromServices] IPostgresProductRepository postgresProd
 
     try
     {
-        postgresProductRepository.Create(product);
+        productRepository.Create(product);
     }
     catch (Exception ex)
     {
@@ -51,9 +51,9 @@ app.MapPost("/products", ([FromServices] IPostgresProductRepository postgresProd
     
 }).WithName("AddProduct");
 
-app.MapPut("/products/{id:guid}", ([FromServices] IPostgresProductRepository postgresProductRepository, Guid id, UpdateProduct command) =>
+app.MapPut("/products/{id:guid}", ([FromServices] IProductRepository productRepository, Guid id, UpdateProduct command) =>
 {
-    var product = postgresProductRepository.Get(id);
+    var product = productRepository.Get(id);
     
     if (product is null)
     {
@@ -67,7 +67,7 @@ app.MapPut("/products/{id:guid}", ([FromServices] IPostgresProductRepository pos
 
     try
     {
-        postgresProductRepository.Update(product);
+        productRepository.Update(product);
     }
     catch (Exception)
     {
@@ -77,16 +77,16 @@ app.MapPut("/products/{id:guid}", ([FromServices] IPostgresProductRepository pos
     return Results.Ok();
 }).WithName("UpdateProduct");
 
-app.MapDelete("/products/{id:guid}", ([FromServices] IPostgresProductRepository postgresProductRepository, Guid id) =>
+app.MapDelete("/products/{id:guid}", ([FromServices] IProductRepository productRepository, Guid id) =>
 {
-    var product = postgresProductRepository.Get(id);
+    var product = productRepository.Get(id);
 
     if (product is null)
     {
         return Results.NotFound();
     }
     
-    postgresProductRepository.Delete(product);
+    productRepository.Delete(product);
     
     return Results.Ok();
 }).WithName("DeleteProduct");

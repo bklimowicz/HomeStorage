@@ -4,11 +4,11 @@ using HomeStorage.Core.ValueObjects;
 
 namespace HomeStorage.Core.DAL.Repositories;
 
-internal sealed class PostgresProductRepository : IPostgresProductRepository
+internal sealed class ProductRepository : IProductRepository
 {
     private readonly HomeStorageDbContext _dbContext;
 
-    public PostgresProductRepository(HomeStorageDbContext dbContext)
+    public ProductRepository(HomeStorageDbContext dbContext)
     {
         _dbContext = dbContext;
     }

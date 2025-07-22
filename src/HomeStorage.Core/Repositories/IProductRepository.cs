@@ -3,7 +3,7 @@ using HomeStorage.Core.ValueObjects;
 
 namespace HomeStorage.Core.Repositories;
 
-public interface IPostgresProductRepository
+public interface IProductRepository
 {
     public Product? Get(ProductId id);
     public IEnumerable<Product> GetAll();

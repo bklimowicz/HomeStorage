@@ -3,7 +3,7 @@ using HomeStorage.Core.ValueObjects;
 
 namespace HomeStorage.Core.Repositories;
 
-public interface IPostgresLocationRepository
+public interface ILocationRepository
 {
     public Location Get(LocationName locationName);
     public IEnumerable<Location> GetAll();

@@ -400,3 +400,6 @@ FodyWeavers.xsd
 *.sln.iml
 
 .idea/
+
+/src/HomeStorage.Api/appsettings.json
+/src/HomeStorage.Api/appsettings.Development.json
