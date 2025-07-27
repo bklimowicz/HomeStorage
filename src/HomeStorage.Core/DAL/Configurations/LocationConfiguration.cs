@@ -9,7 +9,7 @@ internal sealed class LocationConfiguration : IEntityTypeConfiguration<Location>
 {
     public void Configure(EntityTypeBuilder<Location> builder)
     {
-        builder.HasKey(x => x.LocationName);
+        builder.HasKey(x => x.Id);
         builder.Property(x => x.LocationName)
             .HasConversion(x => x.Value, x => new LocationName(x));
     }

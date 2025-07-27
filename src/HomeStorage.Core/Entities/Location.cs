@@ -4,13 +4,15 @@ namespace HomeStorage.Core.Entities;
 
 public class Location
 {
+    public int Id { get; private set; }
     public LocationName LocationName { get; private set; }
     public IEnumerable<Product> Products => _products;
     private readonly List<Product> _products = [];
     
-    public Location(LocationName locationName)
+    public Location(int id, LocationName locationName)
     {
         LocationName = locationName;
+        Id = id;
     }
     
     public void AddProduct(Product product)
