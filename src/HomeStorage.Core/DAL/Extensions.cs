@@ -6,12 +6,12 @@ namespace HomeStorage.Core.DAL;
 
 internal static class Extensions
 {
-    public static IServiceCollection AddCosmosDb(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddPostgresDb(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<HomeStorageDbContext>(x =>
         {
             var connectionString = configuration["ConnectionStrings:default"];
-            x.UseSqlServer(connectionString);
+            x.UseNpgsql(connectionString);
         });
         
         return services;

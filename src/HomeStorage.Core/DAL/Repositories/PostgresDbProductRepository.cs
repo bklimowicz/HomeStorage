@@ -5,25 +5,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HomeStorage.Core.DAL.Repositories;
 
-internal sealed class CosmosDbProductRepository : IProductRepository
+public class PostgresDbProductRepository : IProductRepository
 {
     private readonly HomeStorageDbContext _dbContext;
 
-    public CosmosDbProductRepository(HomeStorageDbContext dbContext)
+    public PostgresDbProductRepository(HomeStorageDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-    public async Task<Product?> GetAsync(ProductId id)
-    {
-        ArgumentNullException.ThrowIfNull(id);
-        return await _dbContext.Products.FirstAsync(x => x.Id == id);
-    }
+    public async Task<Product?> GetAsync(ProductId id) => await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
 
-    public async Task<IEnumerable<Product>> GetAllAsync()
-    {
-        return await _dbContext.Products.ToListAsync();
-    } 
+    public async Task<IEnumerable<Product>> GetAllAsync() => await _dbContext.Products.ToListAsync();
 
     public async Task CreateAsync(Product product)
     {

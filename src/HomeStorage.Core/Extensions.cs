@@ -12,9 +12,9 @@ public static class Extensions
 {
     public static IServiceCollection AddCore(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddCosmosDb(configuration);
+        services.AddPostgresDb(configuration);
         services.AddOpenApi();
-        services.AddScoped<IProductRepository, CosmosDbProductRepository>();
+        services.AddScoped<IProductRepository, PostgresDbProductRepository>();
         
         return services;
     }
