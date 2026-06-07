@@ -1,13 +1,16 @@
 @page "/products/create"
+@using System.Text.Json
 @using HomeStorage.Web.Model.DTOs
+@rendermode InteractiveServer
 @inject HttpClient _httpClient;
+@inject NavigationManager _navigation;
 
 <PageTitle>Create Product</PageTitle>
 
 <h3>Create Product</h3>
 
-<EditForm Model="Product" FormName="ProductEditForm" OnSubmit="Submit">
-    <div class="row mb-6">
+<EditForm Model="Product" FormName="ProductCreateForm" OnValidSubmit="Submit">
+    <div class="row mb-3">
         <div class="col-2">
             <label class="col-form-label">@nameof(Product.Name)</label>
         </div>
@@ -15,7 +18,7 @@
             <InputText @bind-Value="Product.Name" class="form-control"></InputText>
         </div>
     </div>
-    <div class="row mb-6">
+    <div class="row mb-3">
         <div class="col-2">
             <label class="col-form-label">@nameof(Product.Description)</label>
         </div>
@@ -23,7 +26,7 @@
             <InputText @bind-Value="Product.Description" class="form-control"></InputText>
         </div>
     </div>
-    <div class="row mb-6">
+    <div class="row mb-3">
         <div class="col-2">
             <label class="col-form-label">@nameof(Product.Producer)</label>
         </div>
@@ -31,7 +34,7 @@
             <InputText @bind-Value="Product.Producer" class="form-control"></InputText>
         </div>
     </div>
-    <div class="row mb-6">
+    <div class="row mb-3">
         <div class="col-2">
             <label class="col-form-label">@nameof(Product.Quantity)</label>
         </div>
@@ -39,33 +42,61 @@
             <InputNumber @bind-Value="Product.Quantity" class="form-control"></InputNumber>
         </div>
     </div>
-    <button type="submit">Submit</button>
-    <a href="/products">
-        <button>Back to Products</button>
-    </a>
+    <div class="row mb-3">
+        <div class="col-2">
+            <label class="col-form-label">Location</label>
+        </div>
+        <div class="col-6">
+            <InputSelect @bind-Value="Product.LocationId" class="form-select">
+                <option value="0" disabled>-- Select location --</option>
+                @foreach (var location in _locations)
+                {
+                    <option value="@location.Id">@location.LocationName</option>
+                }
+            </InputSelect>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <a href="/products" class="btn btn-secondary">Back to Products</a>
 </EditForm>
 
-@code {
-    [SupplyParameterFromForm(FormName = "ProductEditForm")]
-    private ProductDto? Product { get; set; }
+@if (!string.IsNullOrEmpty(_error))
+{
+    <div class="alert alert-warning mt-3">@_error</div>
+}
 
-    protected override void OnInitialized()
+@code {
+    private ProductDto Product { get; set; } = new();
+    private List<LocationDto> _locations = [];
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
-        Product ??= new ProductDto();
+        var response = await _httpClient.GetAsync("/locations");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            _locations = JsonSerializer.Deserialize<List<LocationDto>>(content) ?? [];
+        }
     }
 
     private async Task Submit()
     {
-        if (Product is null)
+        _error = null;
+        if (Product.LocationId == 0)
+        {
+            _error = "Please select a location.";
             return;
+        }
 
-        try
+        var response = await _httpClient.PostAsJsonAsync("/products", Product);
+        if (response.IsSuccessStatusCode)
         {
-            await _httpClient.PostAsJsonAsync("/products", Product);
-        } catch (Exception ex)
+            _navigation.NavigateTo("/products");
+        }
+        else
         {
-            await Console.Error.WriteLineAsync($"Error creating product: {ex.Message}");
+            _error = "Could not create the product.";
         }
     }
 }

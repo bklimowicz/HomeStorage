@@ -1,0 +1,52 @@
+@page "/locations/{id:int}/edit"
+@using System.Text.Json
+@using HomeStorage.Web.Model.DTOs
+@rendermode InteractiveServer
+@inject HttpClient _httpClient;
+@inject NavigationManager _navigation;
+
+<PageTitle>Edit Location</PageTitle>
+
+<h3>Edit Location</h3>
+
+@if (Location is not null)
+{
+    <EditForm Model="Location" FormName="LocationEditForm" OnValidSubmit="Submit">
+        <div class="row mb-3">
+            <div class="col-2">
+                <label class="col-form-label">@nameof(Location.LocationName)</label>
+            </div>
+            <div class="col-6">
+                <InputText @bind-Value="Location.LocationName" class="form-control"></InputText>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="/locations" class="btn btn-secondary">Back to Locations</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private LocationDto? Location { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await _httpClient.GetAsync($"/locations/{Id}");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            Location = JsonSerializer.Deserialize<LocationDto>(content);
+        }
+    }
+
+    private async Task Submit()
+    {
+        var response = await _httpClient.PutAsJsonAsync($"/locations/{Id}", Location);
+        if (response.IsSuccessStatusCode)
+        {
+            _navigation.NavigateTo("/locations");
+        }
+    }
+}

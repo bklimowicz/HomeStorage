@@ -1,33 +1,41 @@
 using HomeStorage.Core.Entities;
 using HomeStorage.Core.Repositories;
-using HomeStorage.Core.ValueObjects;
+using Microsoft.EntityFrameworkCore;
 
 namespace HomeStorage.Core.DAL.Repositories;
 
 public class PostgresDbLocationRepository : ILocationRepository
 {
-    public Location Get(LocationName locationName)
+    private readonly HomeStorageDbContext _dbContext;
+
+    public PostgresDbLocationRepository(HomeStorageDbContext dbContext)
     {
-        throw new NotImplementedException();
+        _dbContext = dbContext;
     }
 
-    public IEnumerable<Location> GetAll()
+    public async Task<Location?> GetAsync(int id) => await _dbContext.Locations.FirstOrDefaultAsync(x => x.Id == id);
+
+    public async Task<IEnumerable<Location>> GetAllAsync() => await _dbContext.Locations.ToListAsync();
+
+    public async Task<bool> ExistsAsync(int id) => await _dbContext.Locations.AnyAsync(x => x.Id == id);
+
+    public async Task<bool> HasProductsAsync(int id) => await _dbContext.Products.AnyAsync(x => x.LocationId == id);
+
+    public async Task CreateAsync(Location location)
     {
-        throw new NotImplementedException();
+        _dbContext.Locations.Add(location);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Add(Location location)
+    public async Task UpdateAsync(Location location)
     {
-        throw new NotImplementedException();
+        _dbContext.Locations.Update(location);
+        await _dbContext.SaveChangesAsync();
     }
 
-    public void Update(Location location)
+    public async Task DeleteAsync(Location location)
     {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(Location location)
-    {
-        throw new NotImplementedException();
+        _dbContext.Locations.Remove(location);
+        await _dbContext.SaveChangesAsync();
     }
 }

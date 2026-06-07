@@ -14,4 +14,8 @@ public class ProductDto
    public string? Producer { get; set; }
    [JsonPropertyName("quantity")]
    public decimal Quantity { get; set; }
+   [JsonPropertyName("locationId")]
+   public int LocationId { get; set; }
+   [JsonPropertyName("locationName")]
+   public string? LocationName { get; set; }
 }

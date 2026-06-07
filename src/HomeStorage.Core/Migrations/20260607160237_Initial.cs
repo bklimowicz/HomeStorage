@@ -32,9 +32,9 @@ namespace HomeStorage.Core.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Quantity = table.Column<decimal>(type: "numeric", nullable: false),
+                    LocationId = table.Column<int>(type: "integer", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: true),
-                    Producer = table.Column<string>(type: "text", nullable: true),
-                    LocationId = table.Column<int>(type: "integer", nullable: true)
+                    Producer = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -43,7 +43,8 @@ namespace HomeStorage.Core.Migrations
                         name: "FK_Products_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

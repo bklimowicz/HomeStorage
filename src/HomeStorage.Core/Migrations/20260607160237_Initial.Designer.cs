@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HomeStorage.Core.Migrations
 {
     [DbContext(typeof(HomeStorageDbContext))]
-    [Migration("20250802091018_Initial")]
+    [Migration("20260607160237_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace HomeStorage.Core.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.7")
+                .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -50,7 +50,7 @@ namespace HomeStorage.Core.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<int?>("LocationId")
+                    b.Property<int>("LocationId")
                         .HasColumnType("integer");
 
                     b.Property<string>("Name")
@@ -72,14 +72,13 @@ namespace HomeStorage.Core.Migrations
 
             modelBuilder.Entity("HomeStorage.Core.Entities.Product", b =>
                 {
-                    b.HasOne("HomeStorage.Core.Entities.Location", null)
-                        .WithMany("Products")
-                        .HasForeignKey("LocationId");
-                });
+                    b.HasOne("HomeStorage.Core.Entities.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-            modelBuilder.Entity("HomeStorage.Core.Entities.Location", b =>
-                {
-                    b.Navigation("Products");
+                    b.Navigation("Location");
                 });
 #pragma warning restore 612, 618
         }

@@ -403,3 +403,11 @@ FodyWeavers.xsd
 
 /src/HomeStorage.Api/appsettings.json
 /src/HomeStorage.Api/appsettings.Development.json
+# Azure Developer CLI
+.azure/
+
+# macOS
+.DS_Store
+
+# Local secrets
+infrastructure/.env

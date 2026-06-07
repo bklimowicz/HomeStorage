@@ -1,6 +1,41 @@
 @baseUrl=http://localhost:5000
-@productId=d31df92b-b5a9-4ee4-a808-f4471bd508a0
+@productId=1ec7a698-3893-4166-87bd-df8c63b0a044
+@locationId=1
 
+### Locations
+
+GET {{baseUrl}}/locations
+Content-Type: application/json
+
+###
+
+GET {{baseUrl}}/locations/{{locationId}}
+Content-Type: application/json
+
+###
+
+POST {{baseUrl}}/locations
+Content-Type: application/json
+
+{
+  "locationName": "Drawer in the wardrobe"
+}
+
+###
+
+PUT {{baseUrl}}/locations/{{locationId}}
+Content-Type: application/json
+
+{
+  "locationName": "Top drawer in the wardrobe"
+}
+
+###
+
+DELETE {{baseUrl}}/locations/{{locationId}}
+Content-Type: application/json
+
+### Products
 
 GET {{baseUrl}}/products
 Content-Type: application/json
@@ -16,9 +51,11 @@ POST {{baseUrl}}/products
 Content-Type: application/json
 
 {
-  "name": "New Product",
-  "description": "This is a new product.",
-  "quantity": 2
+  "name": "Printer paper",
+  "description": "A4",
+  "producer": "Acme",
+  "quantity": 5,
+  "locationId": 1
 }
 
 ###
@@ -27,9 +64,11 @@ PUT {{baseUrl}}/products/{{productId}}
 Content-Type: application/json
 
 {
-  "name": "Updated Product",
-  "description": "This is an updated product.",
-  "quantity": 5
+  "name": "Printer paper",
+  "description": "A4 80g",
+  "producer": "Acme",
+  "quantity": 3,
+  "locationId": 1
 }
 
 ###

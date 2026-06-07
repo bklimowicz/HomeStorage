@@ -1,29 +1,66 @@
+# Production stack for the Raspberry Pi.
+# Run from the repo root:  docker compose -f infrastructure/docker-compose.yaml up -d --build
+# Configure secrets in infrastructure/.env (see .env.example).
+name: homestorage
+
 services:
     postgres:
-        image: postgres
-        shm_size: '4gb'
-        container_name: postgres
-        restart: unless-stopped
+        image: postgres:17
+        container_name: homestorage-postgres
+        restart: always
         environment:
-         POSTGRES_PASSWORD: postgres
-        ports:
-         - 5432:5432
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DB: homestorage
         volumes:
-         - postgres:/var/lib/postgresql/data
-    pgadmin:
-        image: dpage/pgadmin4
-        container_name: pgadmin4
-        restart: unless-stopped
+            - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres -d homestorage"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    api:
+        build:
+            context: ..
+            dockerfile: src/HomeStorage.Api/Dockerfile
+        container_name: homestorage-api
+        restart: always
         environment:
-         - PGADMIN_DEFAULT_EMAIL=sa@sa.com
-         - PGADMIN_DEFAULT_PASSWORD=sa
-        ports:
-         - 5433:80
-        volumes:
-         - pgadmin:/pgadmin4
+            ASPNETCORE_ENVIRONMENT: Production
+            ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+            ConnectionStrings__homestorage: "Host=postgres;Port=5432;Database=homestorage;Username=postgres;Password=${POSTGRES_PASSWORD}"
+        depends_on:
+            postgres:
+                condition: service_healthy
+
+    web:
+        build:
+            context: ..
+            dockerfile: src/HomeStorage.Web/Dockerfile
+        container_name: homestorage-web
+        restart: always
+        environment:
+            ASPNETCORE_ENVIRONMENT: Production
+            ASPNETCORE_FORWARDEDHEADERS_ENABLED: "true"
+            # Aspire service discovery key -> reach the API over the compose network.
+            services__api__http__0: "http://api:8080"
+        depends_on:
+            - api
+
+    # Cloudflare Tunnel: exposes the site publicly without opening any ports.
+    # Create a tunnel in the Cloudflare Zero Trust dashboard, set TUNNEL_TOKEN in
+    # .env, and add a public hostname routing to http://web:8080 (and later
+    # http://api:8080 for the iOS app).
+    cloudflared:
+        image: cloudflare/cloudflared:latest
+        container_name: homestorage-tunnel
+        restart: always
+        command: tunnel --no-autoupdate run
+        environment:
+            TUNNEL_TOKEN: ${TUNNEL_TOKEN}
+        depends_on:
+            - web
 
 volumes:
-    postgres:
-        driver: local
-    pgadmin:
+    pgdata:
         driver: local

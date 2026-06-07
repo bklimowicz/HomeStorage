@@ -1,0 +1,13 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.idea/
+**/.git/
+.git/
+.gitignore
+**/*.user
+**/appsettings.Development.json
+**/.DS_Store
+README.md
+docs/
+aspire-manifest.json

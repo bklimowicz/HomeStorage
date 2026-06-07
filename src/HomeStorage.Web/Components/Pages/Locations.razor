@@ -1,0 +1,83 @@
+@page "/locations"
+@using System.Text.Json
+@using HomeStorage.Web.Model.DTOs
+@rendermode InteractiveServer
+@inject HttpClient _httpClient;
+
+<PageTitle>Locations</PageTitle>
+
+<h1>Locations</h1>
+<span>
+    <a href="/locations/create" class="btn btn-primary mb-3">Create Location</a>
+</span>
+
+@if (_locations is null)
+{
+    <p>Loading locations...</p>
+}
+else if (!_locations.Any())
+{
+    <p>No locations found.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var location in _locations)
+        {
+            <tr>
+                <td>@location.LocationName</td>
+                <td>
+                    <a href="/locations/@location.Id/edit" class="btn btn-sm btn-primary">Edit</a>
+                    <button class="btn btn-sm btn-danger" @onclick="() => Delete(location.Id)">Delete</button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@if (!string.IsNullOrEmpty(_error))
+{
+    <div class="alert alert-warning">@_error</div>
+}
+
+@code {
+    private List<LocationDto>? _locations;
+    private string? _error;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
+        var response = await _httpClient.GetAsync("/locations");
+        if (response.IsSuccessStatusCode)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            _locations = JsonSerializer.Deserialize<List<LocationDto>>(content) ?? [];
+        }
+    }
+
+    private async Task Delete(int id)
+    {
+        _error = null;
+        var response = await _httpClient.DeleteAsync($"/locations/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadAsync();
+        }
+        else
+        {
+            _error = "Cannot delete a location that still has products assigned.";
+        }
+    }
+}

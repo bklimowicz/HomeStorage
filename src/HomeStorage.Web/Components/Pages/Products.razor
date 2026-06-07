@@ -30,8 +30,10 @@ else
             </div>
             <div class="card-body">
                 <h5 class="card-title">@product.Description</h5>
-                @* <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> *@
+                <p class="card-text">Quantity: @product.Quantity</p>
+                <p class="card-text"><small class="text-muted">Location: @product.LocationName</small></p>
                 <a href="/products/@product.Id/edit" class="btn btn-primary">Edit</a>
+                <button class="btn btn-danger" @onclick="() => Delete(product.Id)">Delete</button>
             </div>
         </div>
     }
@@ -43,13 +45,26 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await base.OnInitializedAsync();
+        await LoadAsync();
+    }
+
+    private async Task LoadAsync()
+    {
         var response = await _httpClient.GetAsync("/products");
 
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
             _products = JsonSerializer.Deserialize<List<ProductDto>>(content) ?? [];
+        }
+    }
+
+    private async Task Delete(Guid? id)
+    {
+        var response = await _httpClient.DeleteAsync($"/products/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadAsync();
         }
     }
 }

@@ -14,9 +14,11 @@ public class PostgresDbProductRepository : IProductRepository
         _dbContext = dbContext;
     }
 
-    public async Task<Product?> GetAsync(ProductId id) => await _dbContext.Products.FirstOrDefaultAsync(x => x.Id == id);
+    public async Task<Product?> GetAsync(ProductId id) =>
+        await _dbContext.Products.Include(x => x.Location).FirstOrDefaultAsync(x => x.Id == id);
 
-    public async Task<IEnumerable<Product>> GetAllAsync() => await _dbContext.Products.ToListAsync();
+    public async Task<IEnumerable<Product>> GetAllAsync() =>
+        await _dbContext.Products.Include(x => x.Location).ToListAsync();
 
     public async Task CreateAsync(Product product)
     {

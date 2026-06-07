@@ -20,5 +20,12 @@ internal sealed class ProductConfiguration : IEntityTypeConfiguration<Product>
             .HasConversion(x => x.Value, x => new Description(x));
         builder.Property(x => x.Producer)
             .HasConversion(x => x.Value, x => new Producer(x));
+
+        builder.Property(x => x.LocationId)
+            .IsRequired();
+        builder.HasOne(x => x.Location)
+            .WithMany()
+            .HasForeignKey(x => x.LocationId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
