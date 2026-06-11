@@ -1,6 +1,12 @@
-# Production stack for the Raspberry Pi.
-# Run from the repo root:  docker compose -f infrastructure/docker-compose.yaml up -d --build
-# Configure secrets in infrastructure/.env (see .env.example).
+# Production stack for the Raspberry Pi — uses prebuilt images from GHCR.
+#
+#   docker compose -f infrastructure/docker-compose.yaml pull
+#   docker compose -f infrastructure/docker-compose.yaml up -d
+#
+# To build locally instead of pulling, add the build override:
+#   docker compose -f infrastructure/docker-compose.yaml -f infrastructure/docker-compose.build.yaml up -d --build
+#
+# Configure secrets/registry in infrastructure/.env (see .env.example).
 name: homestorage
 
 services:
@@ -20,9 +26,7 @@ services:
             retries: 5
 
     api:
-        build:
-            context: ..
-            dockerfile: src/HomeStorage.Api/Dockerfile
+        image: ${IMAGE_PREFIX:-homestorage}/homestorage-api:${IMAGE_TAG:-latest}
         container_name: homestorage-api
         restart: always
         environment:
@@ -34,9 +38,7 @@ services:
                 condition: service_healthy
 
     web:
-        build:
-            context: ..
-            dockerfile: src/HomeStorage.Web/Dockerfile
+        image: ${IMAGE_PREFIX:-homestorage}/homestorage-web:${IMAGE_TAG:-latest}
         container_name: homestorage-web
         restart: always
         environment:
@@ -45,7 +47,8 @@ services:
             # Aspire service discovery key -> reach the API over the compose network.
             services__api__http__0: "http://api:8080"
         depends_on:
-            - api
+            api:
+                condition: service_healthy
 
     # Cloudflare Tunnel: exposes the site publicly without opening any ports.
     # Create a tunnel in the Cloudflare Zero Trust dashboard, set TUNNEL_TOKEN in
@@ -59,7 +62,8 @@ services:
         environment:
             TUNNEL_TOKEN: ${TUNNEL_TOKEN}
         depends_on:
-            - web
+            web:
+                condition: service_healthy
 
 volumes:
     pgdata:

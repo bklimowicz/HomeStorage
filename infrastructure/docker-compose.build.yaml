@@ -1,0 +1,12 @@
+# Override that builds the API/Web images from source instead of pulling from GHCR.
+# Use together with docker-compose.yaml:
+#   docker compose -f infrastructure/docker-compose.yaml -f infrastructure/docker-compose.build.yaml up -d --build
+services:
+    api:
+        build:
+            context: ..
+            dockerfile: src/HomeStorage.Api/Dockerfile
+    web:
+        build:
+            context: ..
+            dockerfile: src/HomeStorage.Web/Dockerfile

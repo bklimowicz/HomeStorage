@@ -45,24 +45,51 @@ You need a domain on Cloudflare (a cheap domain works; Cloudflare itself is free
 
 The hostname → service routing lives in the dashboard; the Pi only needs the token.
 
-## 4. Launch
+## 4. Images: built by GitHub Actions, pulled on the Pi
+
+You don’t compile on the Pi. The workflow
+[`.github/workflows/build-images.yml`](../.github/workflows/build-images.yml) builds **multi-arch
+(amd64 + arm64)** images for the API and Web on every push to `master` (and on manual dispatch) and pushes
+them to **GitHub Container Registry (GHCR)** as:
+
+- `ghcr.io/<owner>/homestorage-api`
+- `ghcr.io/<owner>/homestorage-web`
+
+One-time setup:
+
+1. Set `IMAGE_PREFIX=ghcr.io/<owner>` in `infrastructure/.env` (lowercase GitHub username/org).
+2. Make the Pi able to pull. Either:
+   - **Make the packages public** (GitHub → your profile → Packages → each package → *Package settings* →
+     *Change visibility* → Public), or
+   - **Authenticate on the Pi** with a token that has `read:packages`:
+     ```bash
+     echo <YOUR_PAT> | docker login ghcr.io -u <owner> --password-stdin
+     ```
+
+## 5. Launch
 
 ```bash
-docker compose -f infrastructure/docker-compose.yaml up -d --build
+docker compose -f infrastructure/docker-compose.yaml pull
+docker compose -f infrastructure/docker-compose.yaml up -d
 ```
 
-First build takes a while on a Pi (it compiles the .NET apps). After it’s up:
+After it’s up:
 
 - The API applies EF Core migrations automatically on startup (creates the schema).
 - Visit `https://storage.yourdomain.com` — create a location, then a product.
 
-Check status / logs:
+> First push to `master` hasn’t run yet / no images published? You can build on the Pi instead:
+> ```bash
+> docker compose -f infrastructure/docker-compose.yaml -f infrastructure/docker-compose.build.yaml up -d --build
+> ```
+
+Check status / logs (health shows up in `ps` via the containers’ `/alive` probe):
 ```bash
 docker compose -f infrastructure/docker-compose.yaml ps
 docker compose -f infrastructure/docker-compose.yaml logs -f api
 ```
 
-## 5. Make it survive crashes and freezes (unattended)
+## 6. Make it survive crashes and freezes (unattended)
 
 **Container/-reboot recovery — already handled:** every service uses
 `restart: always`, and `systemctl enable docker` brings them all back after a
@@ -90,16 +117,19 @@ sudo systemctl enable --now watchdog
 
 Now a frozen Pi auto-reboots within ~15s and the stack restarts itself.
 
-## 6. Updating the app
+## 7. Updating the app
+
+Push to `master` → GitHub Actions builds and publishes new images. On the Pi:
 
 ```bash
-git pull
-docker compose -f infrastructure/docker-compose.yaml up -d --build
+git pull   # only needed if compose/env files changed
+docker compose -f infrastructure/docker-compose.yaml pull
+docker compose -f infrastructure/docker-compose.yaml up -d
 ```
 
-Data lives in the `pgdata` Docker volume and is preserved across rebuilds.
+Data lives in the `pgdata` Docker volume and is preserved across updates.
 
-## 7. Notes
+## 8. Notes
 
 - **Data persistence:** the `pgdata` volume keeps your data; don’t run
   `docker compose down -v` unless you want to wipe the database.

@@ -11,15 +11,14 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddNpgsqlDbContext<HomeStorageDbContext>("homestorage");
-builder.Services.AddCore();
+builder.AddCore();
 
 // Honour X-Forwarded-* when running behind the Cloudflare Tunnel (e.g. the
 // future iOS app calling the API through a public hostname).
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
-    options.KnownNetworks.Clear();
+    options.KnownIPNetworks.Clear();
     options.KnownProxies.Clear();
 });
 

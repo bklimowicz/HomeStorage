@@ -42,11 +42,13 @@ dotnet test
 ### Raspberry Pi — self-hosted, free (recommended)
 
 Runs the whole stack as Docker containers behind a free Cloudflare Tunnel, with auto-restart and a hardware
-watchdog so it stays up unattended. See **[docs/DEPLOY-RaspberryPi.md](docs/DEPLOY-RaspberryPi.md)**.
+watchdog so it stays up unattended. Images are built by GitHub Actions (multi-arch) and pushed to GHCR, so
+the Pi only pulls them. See **[docs/DEPLOY-RaspberryPi.md](docs/DEPLOY-RaspberryPi.md)**.
 
 ```bash
-cp infrastructure/.env.example infrastructure/.env   # set POSTGRES_PASSWORD + TUNNEL_TOKEN
-docker compose -f infrastructure/docker-compose.yaml up -d --build
+cp infrastructure/.env.example infrastructure/.env   # POSTGRES_PASSWORD, TUNNEL_TOKEN, IMAGE_PREFIX
+docker compose -f infrastructure/docker-compose.yaml pull
+docker compose -f infrastructure/docker-compose.yaml up -d
 ```
 
 ### Azure Container Apps — optional alternative

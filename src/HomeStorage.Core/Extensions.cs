@@ -1,3 +1,4 @@
+using HomeStorage.Core.DAL;
 using HomeStorage.Core.DAL.Repositories;
 using HomeStorage.Core.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -8,20 +9,33 @@ namespace HomeStorage.Core;
 
 public static class Extensions
 {
-    public static IServiceCollection AddCore(this IServiceCollection services)
+    /// <summary>
+    /// Registers everything the Core layer provides: the EF Core
+    /// <see cref="HomeStorageDbContext"/> (wired to the "homestorage" connection via the
+    /// Aspire Npgsql component), the repository implementations and the API surface (OpenAPI).
+    /// </summary>
+    public static IHostApplicationBuilder AddCore(this IHostApplicationBuilder builder)
     {
-        services.AddOpenApi();
-        services.AddScoped<IProductRepository, PostgresDbProductRepository>();
-        services.AddScoped<ILocationRepository, PostgresDbLocationRepository>();
+        builder.AddNpgsqlDbContext<HomeStorageDbContext>("homestorage");
 
-        return services;
+        builder.Services.AddScoped<IProductRepository, PostgresDbProductRepository>();
+        builder.Services.AddScoped<ILocationRepository, PostgresDbLocationRepository>();
+
+        builder.Services.AddOpenApi();
+
+        return builder;
     }
 
-    public static void UseCore(this WebApplication app)
+    /// <summary>
+    /// Wires the Core middleware and endpoints into the request pipeline.
+    /// </summary>
+    public static WebApplication UseCore(this WebApplication app)
     {
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
         }
+
+        return app;
     }
 }
