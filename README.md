@@ -31,6 +31,18 @@ This starts the Aspire dashboard and brings up PostgreSQL, the API, and the Web 
 created automatically on API startup (EF Core migrations). Open the Web endpoint shown in the dashboard,
 create a location, then add a product to it.
 
+### Run the API on its own (without Aspire)
+
+To iterate on the API alone, start just a PostgreSQL container and run the project directly. The compose file
+matches the credentials and database name in `appsettings.Development.json`:
+
+```bash
+docker compose -f infrastructure/docker-compose.dev.yaml up -d
+dotnet run --project src/HomeStorage.Api   # listens on http://localhost:5000
+```
+
+Stop it with `down` (keeps data) or `down -v` (wipes the volume).
+
 ## Test
 
 ```bash

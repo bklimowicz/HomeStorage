@@ -1,0 +1,31 @@
+# Local development database — run the API/Web from `dotnet run` against this.
+# Credentials and database name match src/HomeStorage.Api/appsettings.Development.json
+# (Host=localhost;Port=5432;Database=homestorage;Username=postgres;Password=postgres).
+#
+#   docker compose -f infrastructure/docker-compose.dev.yaml up -d
+#   docker compose -f infrastructure/docker-compose.dev.yaml down        # keep data
+#   docker compose -f infrastructure/docker-compose.dev.yaml down -v      # wipe data
+name: homestorage-dev
+
+services:
+    postgres:
+        image: postgres:17
+        container_name: homestorage-dev-postgres
+        restart: unless-stopped
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: homestorage
+        ports:
+            - "5432:5432"
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U postgres -d homestorage"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+volumes:
+    pgdata:
+        driver: local
