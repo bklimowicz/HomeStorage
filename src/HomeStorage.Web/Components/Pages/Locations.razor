@@ -6,46 +6,55 @@
 
 <PageTitle>Locations</PageTitle>
 
-<h1>Locations</h1>
-<span>
-    <a href="/locations/create" class="btn btn-primary mb-3">Create Location</a>
-</span>
-
-@if (_locations is null)
-{
-    <p>Loading locations...</p>
-}
-else if (!_locations.Any())
-{
-    <p>No locations found.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Name</th>
-            <th></th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var location in _locations)
-        {
-            <tr>
-                <td>@location.LocationName</td>
-                <td>
-                    <a href="/locations/@location.Id/edit" class="btn btn-sm btn-primary">Edit</a>
-                    <button class="btn btn-sm btn-danger" @onclick="() => Delete(location.Id)">Delete</button>
-                </td>
-            </tr>
-        }
-        </tbody>
-    </table>
-}
+<div class="page-head">
+    <div>
+        <h1>Locations</h1>
+        <p class="page-sub">Rooms, shelves and boxes you store things in.</p>
+    </div>
+    <a href="/locations/create" class="btn btn-primary">＋ Create location</a>
+</div>
 
 @if (!string.IsNullOrEmpty(_error))
 {
     <div class="alert alert-warning">@_error</div>
+}
+
+@if (_locations is null)
+{
+    <p class="muted-note">Loading locations…</p>
+}
+else if (!_locations.Any())
+{
+    <div class="empty-state">
+        <span class="empty-icon">🗺️</span>
+        <p>No locations yet.</p>
+        <a href="/locations/create" class="btn btn-primary">Add your first location</a>
+    </div>
+}
+else
+{
+    <div class="card">
+        <table class="table mb-0">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th class="text-end">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var location in _locations)
+            {
+                <tr>
+                    <td class="align-middle">@location.LocationName</td>
+                    <td class="text-end">
+                        <a href="/locations/@location.Id/edit" class="btn btn-sm btn-secondary">Edit</a>
+                        <button class="btn btn-sm btn-danger" @onclick="() => Delete(location.Id)">Delete</button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 }
 
 @code {

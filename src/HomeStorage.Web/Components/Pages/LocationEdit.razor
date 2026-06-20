@@ -7,22 +7,31 @@
 
 <PageTitle>Edit Location</PageTitle>
 
-<h3>Edit Location</h3>
+<div class="page-head">
+    <div>
+        <h1>Edit location</h1>
+        <p class="page-sub">Rename this location.</p>
+    </div>
+</div>
 
 @if (Location is not null)
 {
-    <EditForm Model="Location" FormName="LocationEditForm" OnValidSubmit="Submit">
-        <div class="row mb-3">
-            <div class="col-2">
-                <label class="col-form-label">@nameof(Location.LocationName)</label>
-            </div>
-            <div class="col-6">
+    <div class="form-card">
+        <EditForm Model="Location" FormName="LocationEditForm" OnValidSubmit="Submit">
+            <div class="mb-3">
+                <label class="form-label">@nameof(Location.LocationName)</label>
                 <InputText @bind-Value="Location.LocationName" class="form-control"></InputText>
             </div>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a href="/locations" class="btn btn-secondary">Back to Locations</a>
-    </EditForm>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Save changes</button>
+                <a href="/locations" class="btn btn-secondary">Cancel</a>
+            </div>
+        </EditForm>
+    </div>
+}
+else
+{
+    <p class="muted-note">Loading location…</p>
 }
 
 @code {

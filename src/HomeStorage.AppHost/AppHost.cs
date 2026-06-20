@@ -5,7 +5,11 @@ var builder = DistributedApplication.CreateBuilder(args);
 // managed Azure Database for PostgreSQL. The data volume persists data across
 // restarts.
 var postgres = builder.AddPostgres("postgres")
-    .WithDataVolume();
+    .WithHostPort(5432)
+    .WithDataVolume()
+    // pgAdmin web UI, auto-wired to this server — open it from the Aspire
+    // dashboard to inspect the database. Local development only.
+    .WithPgAdmin();
 
 var database = postgres.AddDatabase("homestorage");
 

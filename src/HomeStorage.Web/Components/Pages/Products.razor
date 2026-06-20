@@ -6,34 +6,49 @@
 
 <PageTitle>Products</PageTitle>
 
-<h1>Products</h1> 
-<span>
-<a href="/products/create" class="btn btn-primary mb-3">Create Product</a>
-</span>
+<div class="page-head">
+    <div>
+        <h1>Products</h1>
+        <p class="page-sub">Everything you keep, and where it lives.</p>
+    </div>
+    <a href="/products/create" class="btn btn-primary">＋ Create product</a>
+</div>
 
 @if (_products is null)
 {
-    <p>Loading products...</p>
+    <p class="muted-note">Loading products…</p>
 }
 else if (!_products.Any())
 {
-    <p>No products found.</p>
+    <div class="empty-state">
+        <span class="empty-icon">📦</span>
+        <p>No products yet.</p>
+        <a href="/products/create" class="btn btn-primary">Add your first product</a>
+    </div>
 }
 else
 {
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
     @foreach(var product in _products)
     {
-        <div class="card">
-            <div class="card-header">
-                @product.Name
-            </div>
-            <div class="card-body">
-                <h5 class="card-title">@product.Description</h5>
-                <p class="card-text">Quantity: @product.Quantity</p>
-                <p class="card-text"><small class="text-muted">Location: @product.LocationName</small></p>
-                <a href="/products/@product.Id/edit" class="btn btn-primary">Edit</a>
-                <button class="btn btn-danger" @onclick="() => Delete(product.Id)">Delete</button>
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>@product.Name</span>
+                    <span class="qty-pill">@product.Quantity</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@(string.IsNullOrWhiteSpace(product.Description) ? "—" : product.Description)</h5>
+                    @if (!string.IsNullOrWhiteSpace(product.Producer))
+                    {
+                        <p class="card-text"><span class="meta-label">Producer</span> @product.Producer</p>
+                    }
+                    <p class="card-text"><span class="meta-label">Location</span> <span class="loc-tag">@product.LocationName</span></p>
+                    <div class="card-actions">
+                        <a href="/products/@product.Id/edit" class="btn btn-secondary btn-sm">Edit</a>
+                        <button class="btn btn-danger btn-sm" @onclick="() => Delete(product.Id)">Delete</button>
+                    </div>
+                </div>
             </div>
         </div>
     }
