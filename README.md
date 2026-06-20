@@ -38,7 +38,7 @@ matches the credentials and database name in `appsettings.Development.json`:
 
 ```bash
 docker compose -f infrastructure/docker-compose.dev.yaml up -d
-dotnet run --project src/HomeStorage.Api   # listens on http://localhost:5000
+dotnet run --project src/HomeStorage.Api   # listens on http://localhost:5080
 ```
 
 Stop it with `down` (keeps data) or `down -v` (wipes the volume).

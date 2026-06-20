@@ -49,9 +49,9 @@
 }
 
 .brand-name {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1.05rem;
+    letter-spacing: -0.02em;
     color: #f3f6ff;
 }
 
@@ -103,19 +103,23 @@
         background: none;
         border: none;
         border-radius: 10px;
-        height: 2.9rem;
+        height: 2.8rem;
         display: flex;
         align-items: center;
-        line-height: 2.9rem;
+        line-height: 2.8rem;
         width: 100%;
-        padding-left: 0.9rem;
+        padding-left: 0.85rem;
+        font-weight: 450;
         transition: background-color 0.15s ease, color 0.15s ease;
     }
 
 .nav-item ::deep a.active {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.28) 0%, rgba(56, 189, 248, 0.10) 100%);
+    background-color: rgba(59, 130, 246, 0.20);
     color: #fff;
-    box-shadow: inset 3px 0 0 0 #38bdf8;
+}
+
+.nav-item ::deep a.active .bi {
+    opacity: 1;
 }
 
 .nav-item ::deep a.active .bi {

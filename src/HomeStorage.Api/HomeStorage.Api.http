@@ -1,4 +1,4 @@
-@baseUrl=http://localhost:5000
+@baseUrl=http://localhost:5080
 @productId=1ec7a698-3893-4166-87bd-df8c63b0a044
 @locationId=1
 
